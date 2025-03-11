@@ -1,4 +1,4 @@
-# stm-tip-ethcing
+# stm-tip-etching
 STM探針を作製するためのPythonプログラムです。
 
 ## 主な機能
