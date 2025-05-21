@@ -58,6 +58,10 @@ class AD2Monitor(QMainWindow):
             # スコープの初期化
             scope.open(self.device_data)
             scope.trigger(self.device_data, enable=False)
+            # スコープ初期化後に追加（__init__内）
+            self.dwf.FDwfAnalogInChannelEnableSet(self.hdwf, c_int(0), c_bool(True))
+            self.dwf.FDwfAnalogInChannelRangeSet(self.hdwf, c_int(0), c_double(10.0))  # CH1 の入力レンジを ±10V に
+
             
             # デジタルIOの初期化
             # 0番目ビットを出力として有効にする (0x0001)
@@ -121,7 +125,7 @@ class AD2Monitor(QMainWindow):
         try:
             # 1. サンプルを取得（dataがリストの場合、1サンプル目を使用）
             data = scope.record(self.device_data, channel=1)
-            sample = data[0] if isinstance(data, (list, tuple)) and len(data) > 0 else data
+            sample = np.abs(data[0]) if isinstance(data, (list, tuple)) and len(data) > 0 else data
 
             # 2. サンプルをバッファに追加
             if not hasattr(self, 'acquisition_buffer'):
